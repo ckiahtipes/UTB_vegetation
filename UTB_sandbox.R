@@ -31,7 +31,8 @@ specimens_UTM = lonlat2utm(specimens$LongDecL, specimens$LatDecL)
 
 plot(0, 0, xlim = c(map_SW$easting,map_NE$easting), ylim=c(map_SW$northing,map_NE$northing), pch = NA)
 map("county", add = TRUE)
-plot(UTB_cover)
+points(specimens_UTM$easting, specimens_UTM$northing, pch = 21)
+
 
 
 
