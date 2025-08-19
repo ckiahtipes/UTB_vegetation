@@ -12,7 +12,8 @@ library(oce)
 specimens = read.csv("UTB_specimens_2010_2022.csv", header = TRUE)
 
 landcover_path = "~/Dropbox/Temporary/UTB_Plant-Inventory/UTB_code/mapping/Annual_NLCD_H25V17_LndCov_2024_CU_C1V1.tif" 
-landcover = raster(landcover_path)
+llandcover_rast = rast(landcover_path)
+landcover_UTM = project(landcover_rast, "EPSG:3747", method = "near")
 
 lat_min = 27.90
 lat_max = 28.05
