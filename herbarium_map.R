@@ -2,8 +2,7 @@
 
 library(sf)
 library(spData)
-library(terra)
-library(geodata)
+library(spDataLarge)
 
 world_proj = st_transform(world, "+proj=eck4")
 #world_cents = st_centroid(world_proj, of_largest_polygon = TRUE)
@@ -26,12 +25,30 @@ plot(amcs, add = TRUE, col = "darkgreen")
 
 ###Another method
 
+library(terra)
+library(geodata)
+library(geodata)
+library(maps)
+
 countries <- world(resolution = 5, path = "maps")
 cntry_codes <- country_codes()
 countries <- merge(countries, cntry_codes, by.x = "GID_0", by.y = "ISO3", all.x = TRUE)
-count_proj <- st_transform(countries, "+proj=eck4")
+#count_proj <- st_transform(countries, "+proj=eck4")
 plot(countries, "continent", lwd = 0.2, main = "Countries by continent")
 
 
 continents <- aggregate(countries, by = "continent")
 plot(continents, "continent", lwd = 0.2)
+
+###Terra package testing
+
+newcrs = "+proj=eck4 +datum=WGS84"
+
+continents_proj = terra::project(continents, newcrs)
+plot(continents_proj)
+
+#Cool, this works. Now, we need to create the geographic regions that matter to the USF Herbarium, combine them, then transform.
+
+
+
+

@@ -1,5 +1,6 @@
 #Notes for geocomputation tutorial.
 
+library(geodata)
 library(sf)
 library(terra)
 library(spData)
