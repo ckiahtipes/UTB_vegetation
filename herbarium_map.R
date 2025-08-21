@@ -20,7 +20,7 @@ amcs = st_union(world_amcs)
 world_euro = world_proj[world_proj$continent == "Europe", ]
 euro = st_union(world_euro)
 
-plot(euro, add = TRUE, col = "lightblue")
+#plot(euro, add = TRUE, col = "lightblue")
 plot(amcs, add = TRUE, col = "darkgreen")
 
 ###Another method
@@ -49,6 +49,26 @@ plot(continents_proj)
 
 #Cool, this works. Now, we need to create the geographic regions that matter to the USF Herbarium, combine them, then transform.
 
+NAregion = countries[countries$continent == "North America",]
+NA_proj = terra::project(NAregion, newcrs)
 
+CAregion = countries[countries$UNREGION1 == "Central America"|countries$UNREGION1 == "South America",]
+CA_proj = terra::project(CAregion, newcrs)
+
+CRregion = countries[countries$UNREGION1 == "Caribbean",]
+CR_proj = terra::project(CRregion, newcrs)
+
+#Outline map of countries
+
+countries_proj = terra::project(countries, newcrs)
+
+#Plotting
+
+
+plot(continents_proj, col = "blue")
+plot(countries_proj, add = TRUE)
+plot(NA_proj, col = "gold", add = TRUE)
+plot(CA_proj, col = "darkgreen", add = TRUE)
+plot(CR_proj, col = "darkgray", add = TRUE)
 
 
