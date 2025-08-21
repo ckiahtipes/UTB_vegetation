@@ -29,6 +29,22 @@ library(terra)
 library(geodata)
 library(geodata)
 library(maps)
+data("us_states")
+
+se_states = us_states[us_states$NAME == "Arkansas" |
+                        us_states$NAME == "Louisiana" |
+                        us_states$NAME == "Mississippi"|
+                        us_states$NAME == "Tennessee" |
+                        us_states$NAME == "Alabama"|
+                        us_states$NAME == "Georgia"|
+                        us_states$NAME == "North Carolina"|
+                        us_states$NAME == "South Carolina",]
+
+se_proj = st_transform(se_states, "+proj=eck4")
+
+FL_poly = us_states[us_states$NAME == "Florida",]
+FL_proj = st_transform(FL_poly, "+proj=eck4")
+
 
 countries <- world(resolution = 5, path = "maps")
 cntry_codes <- country_codes()
@@ -64,11 +80,26 @@ countries_proj = terra::project(countries, newcrs)
 
 #Plotting
 
+par(mfrow = c(2,1))
+
+NA_crop = crop(NA_proj, c(-14629290, -3000000, 2000000, 8376063))
+plot(NA_crop)
+plot(NA_proj, col = "gold", add = TRUE)
+plot(CA_proj, col = "darkgreen", add = TRUE)
+plot(CR_proj, col = "darkgray", add = TRUE)
+plot(se_proj, col = "red", add = TRUE)
+plot(FL_proj, col = "tan", add = TRUE)
+
 
 plot(continents_proj, col = "blue")
 plot(countries_proj, add = TRUE)
 plot(NA_proj, col = "gold", add = TRUE)
 plot(CA_proj, col = "darkgreen", add = TRUE)
 plot(CR_proj, col = "darkgray", add = TRUE)
+plot(se_proj, col = "red", add = TRUE)
+plot(FL_proj, col = "tan", add = TRUE)
+
+
+par(mfrow = c(1,1))
 
 

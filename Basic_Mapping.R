@@ -74,4 +74,3 @@ points(specimens_UTM$easting, specimens_UTM$northing, pch = 21, bg = "gold")
 
 
 
-
