@@ -1,27 +1,27 @@
 ###Plotting USF Herbarium Region Colors on World Map
 
-library(sf)
-library(spData)
-library(spDataLarge)
+#library(sf)
+#library(spData)
+#library(spDataLarge)
 
-world_proj = st_transform(world, "+proj=eck4")
-#world_cents = st_centroid(world_proj, of_largest_polygon = TRUE)
-par(mar = c(0, 0, 0, 0))
-plot(world_proj["continent"], reset = FALSE, main = "", key.pos = NULL)
-#g = st_graticule()
-#g = st_transform(g, crs = "+proj=eck4")
-#plot(g$geometry, add = TRUE, col = "lightgray")
-#cex = sqrt(world$pop) / 10000
-#plot(st_geometry(world_cents), add = TRUE, cex = cex, lwd = 2, graticule = TRUE)
-
-world_amcs = world_proj[world_proj$region_un == "Americas", ]
-amcs = st_union(world_amcs)
-
-world_euro = world_proj[world_proj$continent == "Europe", ]
-euro = st_union(world_euro)
-
-#plot(euro, add = TRUE, col = "lightblue")
-plot(amcs, add = TRUE, col = "darkgreen")
+#world_proj = st_transform(world, "+proj=eck4")
+##world_cents = st_centroid(world_proj, of_largest_polygon = TRUE)
+#par(mar = c(0, 0, 0, 0))
+#plot(world_proj["continent"], reset = FALSE, main = "", key.pos = NULL)
+##g = st_graticule()
+##g = st_transform(g, crs = "+proj=eck4")
+##plot(g$geometry, add = TRUE, col = "lightgray")
+##cex = sqrt(world$pop) / 10000
+##plot(st_geometry(world_cents), add = TRUE, cex = cex, lwd = 2, graticule = TRUE)
+#
+#world_amcs = world_proj[world_proj$region_un == "Americas", ]
+#amcs = st_union(world_amcs)
+#
+#world_euro = world_proj[world_proj$continent == "Europe", ]
+##euro = st_union(world_euro)
+#
+##plot(euro, add = TRUE, col = "lightblue")
+#plot(amcs, add = TRUE, col = "darkgreen")
 
 ###Another method
 
@@ -29,7 +29,30 @@ library(terra)
 library(geodata)
 library(geodata)
 library(maps)
+library(wesanderson)
 data("us_states")
+
+#Functions
+
+t_col <- function(color, percent = 50, name = NULL) {
+  #      color = color name
+  #    percent = % transparency
+  #       name = an optional name for the color
+  
+  ## Get RGB values for named color
+  rgb.val <- col2rgb(color)
+  
+  ## Make new color using input color as base and alpha set by transparency
+  t.col <- rgb(rgb.val[1], rgb.val[2], rgb.val[3],
+               max = 255,
+               alpha = (100 - percent) * 255 / 100,
+               names = name)
+  
+  ## Save the color
+  invisible(t.col)
+}
+
+#Now we set up some map basics
 
 se_states = us_states[us_states$NAME == "Arkansas" |
                         us_states$NAME == "Louisiana" |
@@ -61,7 +84,7 @@ plot(continents, "continent", lwd = 0.2)
 newcrs = "+proj=eck4 +datum=WGS84"
 
 continents_proj = terra::project(continents, newcrs)
-plot(continents_proj)
+#plot(continents_proj)
 
 #Cool, this works. Now, we need to create the geographic regions that matter to the USF Herbarium, combine them, then transform.
 
@@ -74,6 +97,25 @@ CA_proj = terra::project(CAregion, newcrs)
 CRregion = countries[countries$UNREGION1 == "Caribbean",]
 CR_proj = terra::project(CRregion, newcrs)
 
+#USregion = countries[US_]
+
+#Want to modify the alpha on the colors to make them easier on my eyes.
+
+plot_colors = wes_palette("Cavalcanti1", 100, "continuous")
+
+NA_clcode = "gold"
+WR_clcode = "lightblue"
+CA_clcode = "darkgreen"
+CR_clcode = "darkgray"
+SE_clcode = "red"
+FL_clcode = "tan"
+
+map_clcodes = c(NA_clcode, WR_clcode, CA_clcode, CR_clcode, SE_clcode, FL_clcode)
+
+map_colors = sapply(map_clcodes, function(x){
+  t_col(x, 30)
+})
+
 #Outline map of countries
 
 countries_proj = terra::project(countries, newcrs)
@@ -82,22 +124,23 @@ countries_proj = terra::project(countries, newcrs)
 
 par(mfrow = c(2,1))
 
-NA_crop = crop(NA_proj, c(-14629290, -3000000, 2000000, 8376063))
+#NA_crop = crop(NA_proj, c(-15000000, -3800000, 2000000, 8000000))
+NA_crop = crop(NA_proj, c(-10000000, -5000000, 2000000, 5000000))
 plot(NA_crop)
-plot(NA_proj, col = "gold", add = TRUE)
-plot(CA_proj, col = "darkgreen", add = TRUE)
-plot(CR_proj, col = "darkgray", add = TRUE)
-plot(se_proj, col = "red", add = TRUE)
-plot(FL_proj, col = "tan", add = TRUE)
+plot(NA_proj, col = map_colors[1], add = TRUE)
+plot(CA_proj, col = map_colors[3], add = TRUE)
+plot(CR_proj, col = map_colors[4], add = TRUE)
+plot(se_proj, col = map_colors[5], add = TRUE)
+plot(FL_proj, col = map_colors[6], add = TRUE)
 
 
-plot(continents_proj, col = "blue")
+plot(continents_proj, col = map_colors[2])
 plot(countries_proj, add = TRUE)
-plot(NA_proj, col = "gold", add = TRUE)
-plot(CA_proj, col = "darkgreen", add = TRUE)
-plot(CR_proj, col = "darkgray", add = TRUE)
-plot(se_proj, col = "red", add = TRUE)
-plot(FL_proj, col = "tan", add = TRUE)
+plot(NA_proj, col = map_colors[1], add = TRUE)
+plot(CA_proj, col = map_colors[3], add = TRUE)
+plot(CR_proj, col = map_colors[4], add = TRUE)
+plot(se_proj, col = map_colors[5], add = TRUE)
+plot(FL_proj, col = map_colors[6], add = TRUE)
 
 
 par(mfrow = c(1,1))
