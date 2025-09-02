@@ -65,6 +65,34 @@ se_states = us_states[us_states$NAME == "Arkansas" |
 
 se_proj = st_transform(se_states, "+proj=eck4")
 
+AR_poly = us_states[us_states$NAME == "Arkansas",]
+LS_poly = us_states[us_states$NAME == "Louisiana",]
+MS_poly = us_states[us_states$NAME == "Mississippi",]
+TN_poly = us_states[us_states$NAME == "Tennessee",]
+AL_poly = us_states[us_states$NAME == "Alabama",]
+GA_poly = us_states[us_states$NAME == "Georgia",]
+NC_poly = us_states[us_states$NAME == "North Carolina",]
+SC_poly = us_states[us_states$NAME == "South Carolina",]
+
+AR_proj = st_transform(AR_poly, "+proj=eck4")
+LS_proj = st_transform(LS_poly, "+proj=eck4")
+MS_proj = st_transform(MS_poly, "+proj=eck4")
+TN_proj = st_transform(TN_poly, "+proj=eck4")
+AL_proj = st_transform(AL_poly, "+proj=eck4")
+GA_proj = st_transform(GA_poly, "+proj=eck4")
+NC_proj = st_transform(NC_poly, "+proj=eck4")
+SC_proj = st_transform(SC_poly, "+proj=eck4")
+
+AR_centr = st_centroid(AR_proj)
+LS_centr = st_centroid(LS_proj)
+MS_centr = st_centroid(MS_proj)
+TN_centr = st_centroid(TN_proj)
+AL_centr = st_centroid(AL_proj)
+GA_centr = st_centroid(GA_proj)
+NC_centr = st_centroid(NC_proj)
+SC_centr = st_centroid(SC_proj)
+
+
 FL_poly = us_states[us_states$NAME == "Florida",]
 FL_proj = st_transform(FL_poly, "+proj=eck4")
 
@@ -125,16 +153,24 @@ countries_proj = terra::project(countries, newcrs)
 par(mfrow = c(2,1))
 
 #NA_crop = crop(NA_proj, c(-15000000, -3800000, 2000000, 8000000))
-NA_crop = crop(NA_proj, c(-10000000, -5000000, 2000000, 5000000))
-plot(NA_crop)
+NA_crop = crop(NA_proj, c(-12000000, -5000000, 2000000, 5200000))
+plot(NA_crop, axes = FALSE, ann = FALSE)
 plot(NA_proj, col = map_colors[1], add = TRUE)
 plot(CA_proj, col = map_colors[3], add = TRUE)
 plot(CR_proj, col = map_colors[4], add = TRUE)
 plot(se_proj, col = map_colors[5], add = TRUE)
 plot(FL_proj, col = map_colors[6], add = TRUE)
 
+text(AR_centr, "AR", cex = 0.5)
+text(LS_centr, "LS", cex = 0.5)
+text(MS_centr, "MS", cex = 0.5)
+text(TN_centr, "TN", cex = 0.5)
+text(AL_centr, "AL", cex = 0.5)
+text(GA_centr, "GA", cex = 0.5)
+text(NC_centr, "NC", cex = 0.5)
+text(SC_centr, "SC", cex = 0.5)
 
-plot(continents_proj, col = map_colors[2])
+plot(continents_proj, col = map_colors[2], axes = FALSE, ann = FALSE)
 plot(countries_proj, add = TRUE)
 plot(NA_proj, col = map_colors[1], add = TRUE)
 plot(CA_proj, col = map_colors[3], add = TRUE)
