@@ -30,6 +30,8 @@ library(geodata)
 library(geodata)
 library(maps)
 library(wesanderson)
+library(spData)
+library(sf)
 data("us_states")
 
 #Functions
@@ -66,7 +68,7 @@ se_states = us_states[us_states$NAME == "Arkansas" |
 se_proj = st_transform(se_states, "+proj=eck4")
 
 AR_poly = us_states[us_states$NAME == "Arkansas",]
-LS_poly = us_states[us_states$NAME == "Louisiana",]
+LA_poly = us_states[us_states$NAME == "Louisiana",]
 MS_poly = us_states[us_states$NAME == "Mississippi",]
 TN_poly = us_states[us_states$NAME == "Tennessee",]
 AL_poly = us_states[us_states$NAME == "Alabama",]
@@ -75,7 +77,7 @@ NC_poly = us_states[us_states$NAME == "North Carolina",]
 SC_poly = us_states[us_states$NAME == "South Carolina",]
 
 AR_proj = st_transform(AR_poly, "+proj=eck4")
-LS_proj = st_transform(LS_poly, "+proj=eck4")
+LA_proj = st_transform(LA_poly, "+proj=eck4")
 MS_proj = st_transform(MS_poly, "+proj=eck4")
 TN_proj = st_transform(TN_poly, "+proj=eck4")
 AL_proj = st_transform(AL_poly, "+proj=eck4")
@@ -84,7 +86,7 @@ NC_proj = st_transform(NC_poly, "+proj=eck4")
 SC_proj = st_transform(SC_poly, "+proj=eck4")
 
 AR_centr = st_centroid(AR_proj)
-LS_centr = st_centroid(LS_proj)
+LA_centr = st_centroid(LA_proj)
 MS_centr = st_centroid(MS_proj)
 TN_centr = st_centroid(TN_proj)
 AL_centr = st_centroid(AL_proj)
@@ -97,15 +99,23 @@ FL_poly = us_states[us_states$NAME == "Florida",]
 FL_proj = st_transform(FL_poly, "+proj=eck4")
 
 
+#Next we modify Louisiana which doesn't quite plot right
+
+LA_geo = st_point(c(-8199975, 3968894))
+LA_geom = st_sfc(LA_geo, crs = "+proj=eck4")
+LA_centr$geometry = LA_geom
+
+#Check this section, if nothing is useful then cut.
+
 countries <- world(resolution = 5, path = "maps")
 cntry_codes <- country_codes()
 countries <- merge(countries, cntry_codes, by.x = "GID_0", by.y = "ISO3", all.x = TRUE)
 #count_proj <- st_transform(countries, "+proj=eck4")
-plot(countries, "continent", lwd = 0.2, main = "Countries by continent")
+#plot(countries, "continent", lwd = 0.2, main = "Countries by continent")
 
 
 continents <- aggregate(countries, by = "continent")
-plot(continents, "continent", lwd = 0.2)
+#plot(continents, "continent", lwd = 0.2)
 
 ###Terra package testing
 
@@ -139,10 +149,13 @@ SE_clcode = "red"
 FL_clcode = "tan"
 
 map_clcodes = c(NA_clcode, WR_clcode, CA_clcode, CR_clcode, SE_clcode, FL_clcode)
+map_trans = c(30, 30, 30, 30, 30, 50)
 
 map_colors = sapply(map_clcodes, function(x){
   t_col(x, 30)
 })
+
+map_colors[6] = t_col(map_clcodes[6], 50)
 
 #Outline map of countries
 
@@ -153,7 +166,7 @@ countries_proj = terra::project(countries, newcrs)
 par(mfrow = c(2,1))
 
 #NA_crop = crop(NA_proj, c(-15000000, -3800000, 2000000, 8000000))
-NA_crop = crop(NA_proj, c(-12000000, -5000000, 2000000, 5200000))
+NA_crop = crop(NA_proj, c(-12000000, -1000000, 2000000, 5200000))
 plot(NA_crop, axes = FALSE, ann = FALSE)
 plot(NA_proj, col = map_colors[1], add = TRUE)
 plot(CA_proj, col = map_colors[3], add = TRUE)
@@ -162,13 +175,19 @@ plot(se_proj, col = map_colors[5], add = TRUE)
 plot(FL_proj, col = map_colors[6], add = TRUE)
 
 text(AR_centr, "AR", cex = 0.5)
-text(LS_centr, "LS", cex = 0.5)
+text(LA_centr, "LA", cex = 0.5)
 text(MS_centr, "MS", cex = 0.5)
 text(TN_centr, "TN", cex = 0.5)
 text(AL_centr, "AL", cex = 0.5)
 text(GA_centr, "GA", cex = 0.5)
 text(NC_centr, "NC", cex = 0.5)
 text(SC_centr, "SC", cex = 0.5)
+
+legend(-6500000, 4250000, 
+       c("Florida", "Southeast US", "US/Canada", "Caribbean","Americas", "World"), 
+       fill = c(map_colors[6], map_colors[5], map_colors[1], map_colors[4], map_colors[3], map_colors[2]),
+       cex = 0.5,
+       title = "Folder Color")
 
 plot(continents_proj, col = map_colors[2], axes = FALSE, ann = FALSE)
 plot(countries_proj, add = TRUE)
