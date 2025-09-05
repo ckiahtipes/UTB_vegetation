@@ -144,9 +144,9 @@ plot_colors = wes_palette("Cavalcanti1", 100, "continuous")
 NA_clcode = "gold"
 WR_clcode = "lightblue"
 CA_clcode = "darkgreen"
-CR_clcode = "darkgray"
+CR_clcode = "gray"
 SE_clcode = "red"
-FL_clcode = "tan"
+FL_clcode = "burlywood"
 
 map_clcodes = c(NA_clcode, WR_clcode, CA_clcode, CR_clcode, SE_clcode, FL_clcode)
 map_trans = c(30, 30, 30, 30, 30, 50)
@@ -155,7 +155,7 @@ map_colors = sapply(map_clcodes, function(x){
   t_col(x, 30)
 })
 
-map_colors[6] = t_col(map_clcodes[6], 50)
+map_colors[6] = t_col(FL_clcode, 10)
 
 #Outline map of countries
 
@@ -163,11 +163,11 @@ countries_proj = terra::project(countries, newcrs)
 
 #Plotting
 
-par(mfrow = c(2,1))
+par(mfrow = c(2,1), mar = c(1, 1, 1, 1) + 0.1)
 
 #NA_crop = crop(NA_proj, c(-15000000, -3800000, 2000000, 8000000))
-NA_crop = crop(NA_proj, c(-12000000, -1000000, 2000000, 5200000))
-plot(NA_crop, axes = FALSE, ann = FALSE)
+NA_crop = crop(NA_proj, c(-12000000, -1000000, 1000000, 7000000))
+plot(NA_crop, axes = FALSE, ann = FALSE, ylim = c(1100000, 5500000), xlim = c(-12000000, -3000000))
 plot(NA_proj, col = map_colors[1], add = TRUE)
 plot(CA_proj, col = map_colors[3], add = TRUE)
 plot(CR_proj, col = map_colors[4], add = TRUE)
@@ -183,11 +183,12 @@ text(GA_centr, "GA", cex = 0.5)
 text(NC_centr, "NC", cex = 0.5)
 text(SC_centr, "SC", cex = 0.5)
 
-legend(-6500000, 4250000, 
+legend(-6500000, 4800000, 
        c("Florida", "Southeast US", "US/Canada", "Caribbean","Americas", "World"), 
        fill = c(map_colors[6], map_colors[5], map_colors[1], map_colors[4], map_colors[3], map_colors[2]),
-       cex = 0.5,
-       title = "Folder Color")
+       cex = 0.75,
+       title = "Folder Color",
+       bty = "n")
 
 plot(continents_proj, col = map_colors[2], axes = FALSE, ann = FALSE)
 plot(countries_proj, add = TRUE)
@@ -198,6 +199,6 @@ plot(se_proj, col = map_colors[5], add = TRUE)
 plot(FL_proj, col = map_colors[6], add = TRUE)
 
 
-par(mfrow = c(1,1))
+par(mfrow = c(1,1), mar = c(5, 4, 4, 2) + 0.1)
 
 
