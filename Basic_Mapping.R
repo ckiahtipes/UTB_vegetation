@@ -18,6 +18,12 @@ lnd_attrib = data.frame(
 )
 lnd_sf = st_sf(lnd_attrib, geometry = lnd_geom)
 
+#Get specimens and make UTMs
+
+specimens = read.csv("UTB_specimens_2010_2022.csv", header = TRUE)
+
+specimens_UTM = lonlat2utm(specimens$LongDecL, specimens$LatDecL)
+
 #Can use it to build out points with geometries, right?
 
 spec_matrix = matrix(c(easting = specimens_UTM$easting, northing = specimens_UTM$northing), nrow = length(specimens_UTM$easting), ncol = 2)
@@ -47,16 +53,17 @@ landcover_UTM = project(landcover_rast, "EPSG:3747", method = "near")
 
 #Need this to crop
 
-lat_min = 27.95
+lat_min = 27.99
 lat_max = 28.03
 
 lon_min = -82.675
-lon_max = -82.55
+lon_max = -82.59
 
 map_SW = lonlat2utm(lon_min, lat_min)
 map_NE = lonlat2utm(lon_max, lat_max)
 
 UTB_extent = c(c(map_SW$easting,map_NE$easting),c(map_SW$northing, map_NE$northing))
+
 
 #Cropping from defined extent
 
