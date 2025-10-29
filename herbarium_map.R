@@ -27,11 +27,11 @@
 
 library(terra)
 library(geodata)
-library(geodata)
 library(maps)
 library(wesanderson)
 library(spData)
 library(sf)
+library(png)
 data("us_states")
 
 #Functions
@@ -55,6 +55,8 @@ t_col <- function(color, percent = 50, name = NULL) {
 }
 
 #Now we set up some map basics
+
+logo = readPNG("Herbarium_Logo_Orchid_Square_Black_Trans.png")
 
 se_states = us_states[us_states$NAME == "Arkansas" |
                         us_states$NAME == "Louisiana" |
@@ -182,6 +184,10 @@ text(AL_centr, "AL", cex = 0.5)
 text(GA_centr, "GA", cex = 0.5)
 text(NC_centr, "NC", cex = 0.5)
 text(SC_centr, "SC", cex = 0.5)
+
+#You're a fucking wizard, Harry.
+
+rasterImage(logo, -1.2e+07,1e06,-1.05e+07,2.5e06)
 
 legend(-6500000, 4800000, 
        c("Florida", "Southeast US", "US/Canada", "Caribbean","Americas", "World"), 
