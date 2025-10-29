@@ -24,9 +24,10 @@ FL_counties = counties[FL, ]
 
 #Plot outlines and add Hillsborough county as fill. This is where you can pull from a file or list of some kind to automate.
 
-plot(FL_counties$geometry)
+plot(0, 0, xlim = c(-88, -78), ylim = c(24,32), axes = FALSE, ann = FALSE)
+plot(FL_counties$geometry, add = TRUE)
 plot(FL_counties$geometry[FL_counties$NAME == "Hillsborough"], add = TRUE, col = "red")
 
 #Add herbarium logo - needs adjustment.
 
-rasterImage(logo, -87,25,-85,27)
+rasterImage(logo, -81,29,-79,31)
