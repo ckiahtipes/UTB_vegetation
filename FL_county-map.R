@@ -30,12 +30,12 @@ FL_counties = counties[FL, ]
 
 if(save_figs == TRUE){
   setEPS()
-  tiff("FL_specimen-map.tiff", height = 2200, width = 2300, res = 300)
+  tiff("SV_specimen-map.tiff", height = 2200, width = 2300, res = 300)
 }
 
 plot(0, 0, xlim = c(-88, -78), ylim = c(24,32), axes = FALSE, ann = FALSE)
 plot(FL_counties$geometry, add = TRUE)
-plot(FL_counties$geometry[FL_counties$NAME == "Hillsborough"], add = TRUE, col = "red")
+plot(FL_counties$geometry[FL_counties$NAME == "Palm Beach"], add = TRUE, col = "red")
 
 #Add herbarium logo - needs adjustment.
 
