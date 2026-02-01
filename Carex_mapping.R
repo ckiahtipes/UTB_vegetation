@@ -31,7 +31,6 @@ t_col <- function(color, percent = 50, name = NULL) {
   invisible(t.col)
 }
 
-
 #Read county list and list of carex species with distributions...
 
 county_list <- read.csv("FL_counties.csv", header = TRUE)
@@ -74,10 +73,27 @@ for(i in 1:length(carex_species)){
   
 }
 
+par(mfrow = c(1,1))
+
+#Heatmap of species occurences
+
+county_count = vector("numeric", length = length(county_list$Name))
+
+for(i in 1:length(county_count)){
+  
+  grab = county_list$Code[i]
+  
+  county_count[i] = length(carex$County.Code[carex$County.Code == grab])
+  
+}
 
 
+plot(0, 0, xlim = c(-88, -78), ylim = c(24,32), axes = FALSE, ann = FALSE)
 
-
+palette(rev(heat.colors(max(county_count))))
+plot(FL_counties$geometry, add = TRUE, col = county_count, lty = 0)
+palette("default")
+plot(FL_counties$geometry, add = TRUE)
 
 
 
