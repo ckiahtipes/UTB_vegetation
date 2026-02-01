@@ -13,7 +13,7 @@ data("us_states")
 
 #Set some logical variables
 
-save_figs = TRUE
+save_figs = FALSE
 
 #Let's read a shapefile with couty polygons.
 
