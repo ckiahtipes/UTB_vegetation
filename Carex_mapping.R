@@ -87,10 +87,9 @@ for(i in 1:length(county_count)){
   
 }
 
-
 plot(0, 0, xlim = c(-88, -78), ylim = c(24,32), axes = FALSE, ann = FALSE)
 
-palette(rev(heat.colors(max(county_count))))
+palette(rev(heat.colors(max(county_count), alpha = 0.6)))
 plot(FL_counties$geometry, add = TRUE, col = county_count, lty = 0)
 palette("default")
 plot(FL_counties$geometry, add = TRUE)

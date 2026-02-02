@@ -1,4 +1,4 @@
-#Making a FL map
+#Making maps with counties or other natural area boundaries.
 
 #Libraries
 
@@ -44,3 +44,12 @@ rasterImage(logo, -81,29,-79,31)
 if(save_figs == TRUE){
   dev.off()
 }
+
+#Plotting conservation lands boundaries for plotting or research.
+
+#Pulling conservation lands from FNAI
+
+cons_lands = st_read("maps/flma_202512/FloridaConservationLands.gdb")
+WithlacoocheeSF = cons_lands[2889,] #This is Withlacoochee State Forest
+
+plot(WithlacoocheeSF$Shape) #This just plots the area.
