@@ -48,6 +48,16 @@ if(save_figs == TRUE){
 
 #Plotting conservation lands boundaries for plotting or research.
 
+#Define window - format: xmin, ymin, xmax, ymax OR Lon_min, Lat_min, Lon_max, Lat_max OR UTMe_win[1], UTMn_win[1], UTMe_win[2], UTMn_win[2]
+
+Lat_win = c(28,29.5)
+Lon_win = c(-83.00, -81.5)
+UTM_min = lonlat2utm(Lon_win[1], Lat_win[1])
+UTM_max = lonlat2utm(Lon_win[2], Lat_win[2])
+LL_extent = c(-83.0, 28, -81.5, 29.5)
+UTM_extent = c(UTM_min[1], UTM_min[2], UTM_max[1], UTM_max[2])
+names(UTM_extent) = c("xmin", "ymin", "xmax", "ymax")
+names(LL_extent) = c("xmin", "ymin", "xmax", "ymax")
 #Pulling conservation lands from FNAI
 
 cons_lands = st_read("maps/flma_202512/FloridaConservationLands.gdb")
@@ -56,6 +66,22 @@ WithlacoocheeSF = cons_lands[2889,] #This is Withlacoochee State Forest
 plot(WithlacoocheeSF$Shape) #This just plots the area.
 
 WithlacoocheeSFt = st_transform(WithlacoocheeSF, "EPSG:4326")
+
+#Read landcover from FWC, file is huge and will need to be trimmed.
+
+state_landcover = st_read("maps/Polygon/CLC_v4_Poly.gdb")
+
+hydric_flatwoods = state_landcover[state_landcover$NAME_SITE == "Hydric Pine Flatwoods",]
+
+stld_crop = st_crop(hydric_flatwoods, UTM_extent)
+
+stld_LatLon = st_transform(state_landcover, "EPSG:4326")
+
+
+
+#Transform counties
+
+counties_LatLon = st_transform(FL_counties, "EPSG:4326")
 
 #Import USF Herbarium collections with LAT/LON data
 
@@ -86,6 +112,7 @@ WTL_attrib = data.frame(
 WTL_sf = st_sf(WTL_attrib, geometry = WTL_geom)
 
 #Plotting
+
 
 plot(0,0, xlim = c(-83.00, -81.5), ylim = c(28,29.5), pch = NA)
 
