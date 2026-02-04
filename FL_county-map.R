@@ -124,19 +124,39 @@ WTL_attrib = data.frame(
 
 WTL_sf = st_sf(WTL_attrib, geometry = WTL_geom)
 
+#We need to extract vegetation communities for plotting.
+
+types = unique(LL_crop$NAME_SITE)
+
+#Summarize by area
+
+type_area = sapply(types, function(x){
+  n = sum(LL_crop$Shape_Area[LL_crop$NAME_SITE == x])
+})
+
+type_area = type_area[rev(order(type_area))]
+
+#Let's make a table of the most common types and map them.
+
+type_table = data.frame(type_area[1:20])
+
+#Wrote a table that I will fill with color and class definitions to ease plotting. Will read it at the top and use it here...
+
 #Plotting
 
-
-plot(0,0, xlim = c(-82.75, -81.75), ylim = c(28.25,29.25), pch = NA)
+plot(0,0, xlim = c(-82.6, -82.4), ylim = c(28.6,28.8), pch = NA)
 
 plot(counties_LatLon$geometry, add = TRUE, lty = 2, col = NA)
 
 plot(WithlacoocheeSFt$Shape, add = TRUE, col = "lightblue")
 
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Hydric Pine Flatwoods"], add = TRUE, col = "darkgreen", lwd = 0.5)
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Upland Pine"], add = TRUE, col = "lightgreen", lwd = 0.5)
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Riverine"], add = TRUE, col = "turquoise", lwd = 0.5)
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Mixed Hardwood-Coniferous"], add = TRUE, col = "orange", lwd = 0.5)
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Mixed Hardwood-Coniferous"], add = TRUE, col = "darkgreen", lwd = 0.5)
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Sand Pine Scrub"], add = TRUE, col = "lightgreen", lwd = 0.5)
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Coniferous Plantations"], add = TRUE, col = "darkorange", lwd = 0.5)
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Sandhill"], add = TRUE, col = "gold", lwd = 0.5)
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Residential, Low Density"], add = TRUE, col = "red", lwd = 0.5)
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Marine"], add = TRUE, col = "turquoise", lwd = 0.5)
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Lacustrine"], add = TRUE, col = "darkblue", lwd = 0.5)
 
 points(WTL_points$as.numeric.WTL_sploc.LongDecL., WTL_points$as.numeric.WTL_sploc.LatDecL., pch = 21, bg = "gold")
 
