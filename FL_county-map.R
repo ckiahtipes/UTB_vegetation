@@ -55,9 +55,17 @@ Lon_win = c(-83.00, -81.5)
 UTM_min = lonlat2utm(Lon_win[1], Lat_win[1])
 UTM_max = lonlat2utm(Lon_win[2], Lat_win[2])
 LL_extent = c(-83.0, 28, -81.5, 29.5)
-UTM_extent = c(UTM_min[1], UTM_min[2], UTM_max[1], UTM_max[2])
+UTM_extent = c(UTM_min[[1]], UTM_min[[2]], UTM_max[[1]], UTM_max[[2]])
 names(UTM_extent) = c("xmin", "ymin", "xmax", "ymax")
 names(LL_extent) = c("xmin", "ymin", "xmax", "ymax")
+
+extentUTM <- raster::extent(UTM_min[[1]], UTM_max[[1]], UTM_min[[2]], UTM_max[[2]])
+extentLND <- raster::extent(52652.5, 799595.9, 45555.78, 781583)
+extentLND_sf <- st_set_crs(st_as_sf(as(extentLND, "SpatialPolygons")), "EPSG:3087")
+extentUTM_sf <- st_set_crs(st_as_sf(as(extentUTM, "SpatialPolygons")), "EPSG:3087")
+extentLL_sf <- st_set_crs(st_as_sf(as(raster::extent(-83.00, -81.5, 28, 29.5), "SpatialPolygons")), "EPSG:4269")
+
+
 #Pulling conservation lands from FNAI
 
 cons_lands = st_read("maps/flma_202512/FloridaConservationLands.gdb")
@@ -65,23 +73,28 @@ WithlacoocheeSF = cons_lands[2889,] #This is Withlacoochee State Forest
 
 plot(WithlacoocheeSF$Shape) #This just plots the area.
 
-WithlacoocheeSFt = st_transform(WithlacoocheeSF, "EPSG:4326")
+WithlacoocheeSFt = st_transform(WithlacoocheeSF, "EPSG:4269")
 
-#Read landcover from FWC, file is huge and will need to be trimmed.
+#Read landcover from FWC, file is huge and will need to be trimmed. UPDATE: Colleen may have saved the day
+
+WTL_landcover = read_sf("maps/Export_WSF_Current_NC_Pys_2024/Export_WSF_Current_NC_Pys_2024.shp") #This only plots inside the forest area! 
 
 state_landcover = st_read("maps/Polygon/CLC_v4_Poly.gdb")
+sf_use_s2(FALSE)
+stld_LatLon = st_transform(state_landcover, "EPSG:4269")
+LL_crop = st_intersection(stld_LatLon, extentLL_sf)
 
-hydric_flatwoods = state_landcover[state_landcover$NAME_SITE == "Hydric Pine Flatwoods",]
 
-stld_crop = st_crop(hydric_flatwoods, UTM_extent)
+#hydric_flatwoods = state_landcover[state_landcover$NAME_SITE == "Hydric Pine Flatwoods",]
+#stld_crop = st_crop(hydric_flatwoods, UTM_extent)
 
-stld_LatLon = st_transform(state_landcover, "EPSG:4326")
 
 
 
 #Transform counties
 
-counties_LatLon = st_transform(FL_counties, "EPSG:4326")
+#counties_UTMGDL = st_transform(FL_counties: "EPSG:3087")
+counties_LatLon = st_transform(FL_counties, "EPSG:4269")
 
 #Import USF Herbarium collections with LAT/LON data
 
@@ -100,7 +113,7 @@ WTL_spmx = matrix(c(easting = WTL_UTMpt$easting, northing = WTL_UTMpt$northing),
 
 WTL_Cpoint = st_multipoint(WTL_spmx)
 
-WTL_geom = st_sfc(WTL_Cpoint, crs = "EPSG:4326")
+WTL_geom = st_sfc(WTL_Cpoint, crs = "EPSG:4269")
 
 
 WTL_attrib = data.frame(
@@ -114,11 +127,16 @@ WTL_sf = st_sf(WTL_attrib, geometry = WTL_geom)
 #Plotting
 
 
-plot(0,0, xlim = c(-83.00, -81.5), ylim = c(28,29.5), pch = NA)
+plot(0,0, xlim = c(-82.75, -81.75), ylim = c(28.25,29.25), pch = NA)
 
-plot(counties_LatLon, add = TRUE, lty = 2, col = NA)
+plot(counties_LatLon$geometry, add = TRUE, lty = 2, col = NA)
 
 plot(WithlacoocheeSFt$Shape, add = TRUE, col = "lightblue")
+
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Hydric Pine Flatwoods"], add = TRUE, col = "darkgreen", lwd = 0.5)
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Upland Pine"], add = TRUE, col = "lightgreen", lwd = 0.5)
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Riverine"], add = TRUE, col = "turquoise", lwd = 0.5)
+plot(LL_crop$Shape[LL_crop$NAME_SITE == "Mixed Hardwood-Coniferous"], add = TRUE, col = "orange", lwd = 0.5)
 
 points(WTL_points$as.numeric.WTL_sploc.LongDecL., WTL_points$as.numeric.WTL_sploc.LatDecL., pch = 21, bg = "gold")
 
