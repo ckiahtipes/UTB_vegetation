@@ -142,21 +142,29 @@ type_table = data.frame(type_area[1:20])
 
 #Wrote a table that I will fill with color and class definitions to ease plotting. Will read it at the top and use it here...
 
+type_table = read.csv("WTL_regional-types.csv", header = TRUE)
+
 #Plotting
 
-plot(0,0, xlim = c(-82.6, -82.4), ylim = c(28.6,28.8), pch = NA)
+plot(0,0, xlim = c(-83.0, -82.0), ylim = c(28.0,29.0), pch = NA) #Big View
+#plot(0,0, xlim = c(-82.6, -82.4), ylim = c(28.6,28.8), pch = NA) #Close View
 
 plot(counties_LatLon$geometry, add = TRUE, lty = 2, col = NA)
 
+for(i in 1:nrow(type_table)){
+  plot(LL_crop$Shape[LL_crop$NAME_SITE == type_table$TYPE[i]], add = TRUE, col = type_table$COLOR[i], lwd = 0.5)
+  print(paste0(i, " of ", nrow(type_table), " types plotted"))
+}
+
 plot(WithlacoocheeSFt$Shape, add = TRUE, col = "lightblue")
 
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Mixed Hardwood-Coniferous"], add = TRUE, col = "darkgreen", lwd = 0.5)
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Sand Pine Scrub"], add = TRUE, col = "lightgreen", lwd = 0.5)
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Coniferous Plantations"], add = TRUE, col = "darkorange", lwd = 0.5)
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Sandhill"], add = TRUE, col = "gold", lwd = 0.5)
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Residential, Low Density"], add = TRUE, col = "red", lwd = 0.5)
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Marine"], add = TRUE, col = "turquoise", lwd = 0.5)
-plot(LL_crop$Shape[LL_crop$NAME_SITE == "Lacustrine"], add = TRUE, col = "darkblue", lwd = 0.5)
+#plot(LL_crop$Shape[LL_crop$NAME_SITE == "Mixed Hardwood-Coniferous"], add = TRUE, col = "darkgreen", lwd = 0.5)
+#plot(LL_crop$Shape[LL_crop$NAME_SITE == "Sand Pine Scrub"], add = TRUE, col = "lightgreen", lwd = 0.5)
+#plot(LL_crop$Shape[LL_crop$NAME_SITE == "Coniferous Plantations"], add = TRUE, col = "darkorange", lwd = 0.5)
+#plot(LL_crop$Shape[LL_crop$NAME_SITE == "Sandhill"], add = TRUE, col = "gold", lwd = 0.5)
+#plot(LL_crop$Shape[LL_crop$NAME_SITE == "Residential, Low Density"], add = TRUE, col = "red", lwd = 0.5)
+#plot(LL_crop$Shape[LL_crop$NAME_SITE == "Marine"], add = TRUE, col = "turquoise", lwd = 0.5)
+#plot(LL_crop$Shape[LL_crop$NAME_SITE == "Lacustrine"], add = TRUE, col = "darkblue", lwd = 0.5)
 
 points(WTL_points$as.numeric.WTL_sploc.LongDecL., WTL_points$as.numeric.WTL_sploc.LatDecL., pch = 21, bg = "gold")
 
