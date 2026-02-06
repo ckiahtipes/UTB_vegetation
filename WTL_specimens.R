@@ -62,10 +62,6 @@ for(i in 1:length(epithet)){
   epithet[i] = paste0(genus[i]," ",specs[i])
 }
 
-WTL_data = cbind(WTL_taxa, coll_yr)
 
-test = table(WTL_data$coll_yr, WTL_data$comb_sp.genus)
-
-spec_count = table(epithet)
 
 
