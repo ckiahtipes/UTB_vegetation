@@ -209,3 +209,37 @@ for(i in 1:length(county_list)){
 
 par(mfrow = c(1,1))
 
+#Another basic question - does the number of singletons follow the number of collections in general?
+
+cnty_single = table(WTL_singletons$WTL_sp.county)
+cnty_totals = table(WTL_data$WTL_sp.county)
+
+cnty_cmb = rbind(cnty_single, cnty_totals)
+
+barplot(cnty_cmb, horiz = TRUE, las = 1, beside = TRUE, main = "Total N Collected vs. Singletons at WTL")
+
+#You bet your ass they do. Okay, let's break it out by class.
+
+#Let's lose Lake Co., which isn't adding much and makes the next steps harder.
+
+WTL_data = WTL_data[WTL_data$WTL_sp.county != "Lake Co.",]
+
+WTL_classes = unique(WTL_data$Class)
+
+WTL_biclass = sapply(WTL_classes, function(x){
+  table(WTL_data$WTL_sp.county[WTL_data$Class == x])
+})
+
+WTL_biclass = as.data.frame(WTL_biclass)
+
+barplot(t(WTL_biclass), beside = TRUE, horiz = TRUE, las = 1, main = "N Collected by Class WTL", col = c("gold","darkorange","darkgreen","purple"))
+legend(250, 5, WTL_classes, pt.bg = c("gold","darkorange","darkgreen","purple"), pch = c(rep(22, length(WTL_classes))))
+
+#The more species there are, the more are collected. Similar shapes in the barplots point to a shared underlying pattern.
+
+#Think the message here is that you need to compare WTL with county-level data and we need to build this from the ground up in a new document/project.
+
+
+
+
+
