@@ -36,7 +36,7 @@ if(save_figs == TRUE){
 
 plot(0, 0, xlim = c(-88, -78), ylim = c(24,32), axes = FALSE, ann = FALSE)
 plot(FL_counties$geometry, add = TRUE)
-plot(FL_counties$geometry[FL_counties$NAME == "Palm Beach"], add = TRUE, col = "red")
+plot(FL_counties$geometry[FL_counties$NAME == "Hernando"], add = TRUE, col = "red")
 
 #Add herbarium logo - needs adjustment.
 
