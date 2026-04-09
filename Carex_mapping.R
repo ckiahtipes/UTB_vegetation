@@ -41,7 +41,7 @@ carex <- read.csv("carex_dist.csv", header = TRUE)
 
 carex_species = unique(carex$Scientific.Name)
 
-#Let's read a shapefile with couty polygons.
+#Let's read a shapefile with county polygons.
 
 counties = read_sf("mapping/cb_2024_us_county_500k/cb_2024_us_county_500k.shp")
 
