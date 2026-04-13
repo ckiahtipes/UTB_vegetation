@@ -6,7 +6,7 @@ library(geodata)
 library(sf)
 library(terra)
 library(spData)
-library(spDataLarge)
+#library(spDataLarge)
 library(oce)
 library(tmap)
 
