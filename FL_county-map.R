@@ -144,10 +144,25 @@ type_table = data.frame(type_area[1:20])
 
 type_table = read.csv("WTL_regional-types.csv", header = TRUE)
 
+#Method for combining things based on site types...
+
+
+plot(st_union(LL_crop[LL_crop$NAME_SITE == type_table$TYPE[1] |
+                      LL_crop$NAME_SITE == type_table$TYPE[2] |
+                      LL_crop$NAME_SITE == type_table$TYPE[3] ,]), add = TRUE, col = "darkorange")
+
+impacted = st_combine(LL_crop[LL_crop$NAME_SITE == type_table$TYPE[1] |
+                              LL_crop$NAME_SITE == type_table$TYPE[2] |
+                              LL_crop$NAME_SITE == type_table$TYPE[3] ,])
+
+impacted = sapply(type_table$TYPE[type_table$CLASS == type_table$CLASS[1]], function(x){
+  
+})
+
 #Plotting
 
-plot(0,0, xlim = c(-83.0, -82.0), ylim = c(28.0,29.0), pch = NA) #Big View
-#plot(0,0, xlim = c(-82.6, -82.4), ylim = c(28.6,28.8), pch = NA) #Close View
+#plot(0,0, xlim = c(-83.0, -82.0), ylim = c(28.0,29.0), pch = NA) #Big View
+plot(0,0, xlim = c(-82.6, -82.4), ylim = c(28.6,28.8), pch = NA) #Close View
 
 plot(counties_LatLon$geometry, add = TRUE, lty = 2, col = NA)
 
