@@ -9,6 +9,7 @@ library(spData)
 #library(spDataLarge)
 library(oce)
 library(tmap)
+library(terra)
 
 #Load and make raster
 
@@ -33,13 +34,86 @@ WDI_LiDAR_group = sprc(WDI_LiDAR_rast0, WDI_LiDAR_rast1, WDI_LiDAR_rast2, WDI_Li
 WDI_LiDAR_rast = mosaic(WDI_LiDAR_group)
 WDI_landcover_rast = rast(WDI_landcover_path)
 
-UTB_landcover_mod = project(UTB_landcover_rast, "EPSG:6443", method = "near")
-WDI_landcover_mod = project(WDI_landcover_rast, "EPSG:6443", method = "near")
+UTB_LiDAR_UTM = project(UTB_LiDAR_rast, "EPSG:32617", method = "near")
+WDI_LiDAR_UTM = project(WDI_LiDAR_rast, "EPSG:32617", method = "near")
 
-plot(UTB_landcover_mod)
-plot(UTB_LiDAR_rast, breaks=25, col=gray.colors(25), reset=FALSE, alpha = 0.50, add = TRUE, legend = FALSE)
-contour(UTB_LiDAR_rast, add = TRUE, nlevels = 20)
+UTB_landcover_mod = project(UTB_landcover_rast, "EPSG:32617", method = "near")
+WDI_landcover_mod = project(WDI_landcover_rast, "EPSG:32617", method = "near")
 
-plot(WDI_landcover_mod)
-plot(WDI_LiDAR_rast, breaks = 25, col=gray.colors(25), reset = FALSE, alpha = 0.5, add = TRUE, legend = FALSE)
-contour(WDI_LiDAR_rast, add = TRUE, nlevels = 20)
+#Read sampling points and results
+
+PFAS_sites = read.csv("PFAS_sites.csv", header = TRUE, row.names = "SITE")
+PFAS_reads = read.csv("PFAS_ALL.csv", header = TRUE)
+UTB_sites = PFAS_sites[grep("UPS", row.names(PFAS_sites)),]
+WDI_sites = PFAS_sites[grep("WIP", row.names(PFAS_sites)),]
+
+UTB_points = vect(as.matrix(UTB_sites), crs = "EPSG:32617")
+WDI_points = vect(as.matrix(WDI_sites), crs = "EPSG:32617")
+
+plot(UTB_landcover_mod, main = "Upper Tampa Bay Conservation Park")
+plot(UTB_LiDAR_UTM, breaks=25, col=gray.colors(25), reset=FALSE, alpha = 0.50, add = TRUE, legend = FALSE)
+contour(UTB_LiDAR_UTM, add = TRUE, nlevels = 20)
+points(UTB_points, pch = 21, bg = "gold", cex = 1.25)
+
+
+plot(WDI_landcover_mod, main = "Weedon Island Park")
+plot(WDI_LiDAR_UTM, breaks = 25, col=gray.colors(25), reset = FALSE, alpha = 0.5, add = TRUE, legend = FALSE)
+contour(WDI_LiDAR_UTM, add = TRUE, nlevels = 20)
+points(WDI_points, pch = 21, bg = "gold", cex = 1.25)
+
+#Extract elevations and landcover types from points
+
+UTB_elev = extract(UTB_LiDAR_UTM, UTB_points)
+UTB_lndc = extract(UTB_landcover_rast, UTB_points)
+
+WDI_elev = extract(WDI_LiDAR_UTM, WDI_points)
+WDI_lndc = extract(WDI_landcover_rast, WDI_points)
+
+#Pull PFAS results and combine into one table for each location.
+
+UTB_root = PFAS_reads$Fixed[PFAS_reads$AREA == "UTB" & PFAS_reads$PART == "Root"]
+UTB_shoot = PFAS_reads$Fixed[PFAS_reads$AREA == "UTB" & PFAS_reads$PART == "Shoot"]
+
+WDI_root = PFAS_reads$Fixed[PFAS_reads$AREA == "WIP" & PFAS_reads$PART == "Root"]
+WDI_shoot = PFAS_reads$Fixed[PFAS_reads$AREA == "WIP" & PFAS_reads$PART == "Shoot"]
+
+UTB_PFAS = data.frame(UTB_elev, UTB_lndc, UTB_root, UTB_shoot, row.names = row.names(UTB_sites))
+WDI_PFAS = data.frame(WDI_elev, WDI_lndc, WDI_root, WDI_shoot, row.names = row.names(WDI_sites))
+
+#Some comparisons
+
+par(mfrow = c(2,1))
+
+plot(UTB_PFAS$UTB_LiDAR.DEM_2019_ngs_tampabay_topobath_dem_J1287063tR0_C0, UTB_PFAS$UTB_root,
+     xlim = c(1,6),
+     pch = 21, 
+     bg = "gold",
+     main = "PFAS Readings",
+     ylab = "PFOSK (ng/g)",
+     xlab = "Elevation m")
+
+points(UTB_PFAS$UTB_LiDAR.DEM_2019_ngs_tampabay_topobath_dem_J1287063tR0_C0, UTB_PFAS$UTB_shoot, pch = 21, bg = "forestgreen")
+
+points(WDI_PFAS$mean, WDI_PFAS$WDI_root, pch = 22, bg = "gold")
+points(WDI_PFAS$mean, WDI_PFAS$WDI_shoot, pch = 22, bg = "forestgreen")
+
+legend('topright', c("UTB roots", "UTB shoots", "WDI roots", "WDI shoots"), pch = c(21, 21, 22, 22), pt.bg = c("gold", "forestgreen","gold","forestgreen"))
+
+#Log plotting
+
+plot(UTB_PFAS$UTB_LiDAR.DEM_2019_ngs_tampabay_topobath_dem_J1287063tR0_C0, log(UTB_PFAS$UTB_root), 
+     xlim = c(1,6),
+     pch = 21, 
+     bg = "gold",
+     main = "Log-Transformed PFAS Readings",
+     ylab = "PFOSK (ng/g)",
+     xlab = "Elevation m")
+
+points(UTB_PFAS$UTB_LiDAR.DEM_2019_ngs_tampabay_topobath_dem_J1287063tR0_C0, log(UTB_PFAS$UTB_shoot), pch = 21, bg = "forestgreen")
+
+points(WDI_PFAS$mean, log(WDI_PFAS$WDI_root), pch = 22, bg = "gold")
+points(WDI_PFAS$mean, log(WDI_PFAS$WDI_shoot), pch = 22, bg = "forestgreen")
+legend('topright', c("UTB roots", "UTB shoots", "WDI roots", "WDI shoots"), pch = c(21, 21, 22, 22), pt.bg = c("gold", "forestgreen","gold","forestgreen"))
+
+
+par(mfrow = c(1,1))
