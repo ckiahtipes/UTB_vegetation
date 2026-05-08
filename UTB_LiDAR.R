@@ -50,13 +50,13 @@ WDI_sites = PFAS_sites[grep("WIP", row.names(PFAS_sites)),]
 UTB_points = vect(as.matrix(UTB_sites), crs = "EPSG:32617")
 WDI_points = vect(as.matrix(WDI_sites), crs = "EPSG:32617")
 
-plot(UTB_landcover_mod, main = "Upper Tampa Bay Conservation Park")
+plot(UTB_landcover_mod, main = "Upper Tampa Bay Conservation Park", xlim = c(338000, 341000), ylim = c(3098000, 3101000))
 plot(UTB_LiDAR_UTM, breaks=25, col=gray.colors(25), reset=FALSE, alpha = 0.50, add = TRUE, legend = FALSE)
 contour(UTB_LiDAR_UTM, add = TRUE, nlevels = 20)
 points(UTB_points, pch = 21, bg = "gold", cex = 1.25)
 
 
-plot(WDI_landcover_mod, main = "Weedon Island Park")
+plot(WDI_landcover_mod, main = "Weedon Island Park", xlim = c(341000, 343000), ylim = c(3081000, 3083000))
 plot(WDI_LiDAR_UTM, breaks = 25, col=gray.colors(25), reset = FALSE, alpha = 0.5, add = TRUE, legend = FALSE)
 contour(WDI_LiDAR_UTM, add = TRUE, nlevels = 20)
 points(WDI_points, pch = 21, bg = "gold", cex = 1.25)
@@ -115,5 +115,41 @@ points(WDI_PFAS$mean, log(WDI_PFAS$WDI_root), pch = 22, bg = "gold")
 points(WDI_PFAS$mean, log(WDI_PFAS$WDI_shoot), pch = 22, bg = "forestgreen")
 legend('topright', c("UTB roots", "UTB shoots", "WDI roots", "WDI shoots"), pch = c(21, 21, 22, 22), pt.bg = c("gold", "forestgreen","gold","forestgreen"))
 
+
+par(mfrow = c(1,1))
+
+#Okay let's combine approaches and look for patterns in the PFAS readings in space
+
+#Turn PFAS readings into colors
+
+par(mfrow = c(1,2))
+
+plot(UTB_landcover_mod, main = "UTB Root Samples", xlim = c(338000, 341000), ylim = c(3098000, 3101000))
+plot(UTB_LiDAR_UTM, breaks=25, col=gray.colors(25), reset=FALSE, alpha = 0.50, add = TRUE, legend = FALSE)
+contour(UTB_LiDAR_UTM, add = TRUE, nlevels = 20)
+palette(colorRampPalette(c("darkorange","purple"))(100))
+points(UTB_points, pch = 21, bg = UTB_PFAS$UTB_root*100, cex = 1.25)
+
+plot(UTB_landcover_mod, main = "UTB Shoot Samples", xlim = c(338000, 341000), ylim = c(3098000, 3101000))
+plot(UTB_LiDAR_UTM, breaks=25, col=gray.colors(25), reset=FALSE, alpha = 0.50, add = TRUE, legend = FALSE)
+contour(UTB_LiDAR_UTM, add = TRUE, nlevels = 20)
+palette(colorRampPalette(c("darkorange","purple"))(100))
+points(UTB_points, pch = 21, bg = UTB_PFAS$UTB_shoot*100, cex = 1.25)
+
+par(mfrow = c(1,1))
+
+par(mfrow = c(1,2))
+
+plot(WDI_landcover_mod, main = "WIP Root Samples", xlim = c(341000, 343000), ylim = c(3081000, 3083000))
+plot(WDI_LiDAR_UTM, breaks = 25, col=gray.colors(25), reset = FALSE, alpha = 0.5, add = TRUE, legend = FALSE)
+contour(WDI_LiDAR_UTM, add = TRUE, nlevels = 20)
+palette(colorRampPalette(c("darkorange","purple"))(100))
+points(WDI_points, pch = 21, bg = WDI_PFAS$WDI_root*100, cex = 1.25)
+
+plot(WDI_landcover_mod, main = "WIP Shoot Samples", xlim = c(341000, 343000), ylim = c(3081000, 3083000))
+plot(WDI_LiDAR_UTM, breaks = 25, col=gray.colors(25), reset = FALSE, alpha = 0.5, add = TRUE, legend = FALSE)
+contour(WDI_LiDAR_UTM, add = TRUE, nlevels = 20)
+palette(colorRampPalette(c("darkorange","purple"))(100))
+points(WDI_points, pch = 21, bg = WDI_PFAS$WDI_shoot*100, cex = 1.25)
 
 par(mfrow = c(1,1))
