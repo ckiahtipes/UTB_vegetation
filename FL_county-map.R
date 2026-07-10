@@ -16,7 +16,7 @@ data("us_states")
 
 save_figs = FALSE
 
-#Let's read a shapefile with couty polygons.
+#Let's read a shapefile with county polygons.
 
 counties = read_sf("mapping/cb_2024_us_county_500k/cb_2024_us_county_500k.shp")
 
@@ -36,7 +36,7 @@ if(save_figs == TRUE){
 
 plot(0, 0, xlim = c(-88, -78), ylim = c(24,32), axes = FALSE, ann = FALSE)
 plot(FL_counties$geometry, add = TRUE)
-plot(FL_counties$geometry[FL_counties$NAME == "Hernando"], add = TRUE, col = "red")
+plot(FL_counties$geometry[FL_counties$NAME == "St. Lucie"], add = TRUE, col = "red")
 
 #Add herbarium logo - needs adjustment.
 
