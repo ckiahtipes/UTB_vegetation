@@ -15,7 +15,7 @@ data("us_states")
 #Set some logical variables
 
 save_figs = TRUE
-cnty_name = "St. Lucie"
+cnty_name = "Martin"
 
 #Let's read a shapefile with county polygons.
 
