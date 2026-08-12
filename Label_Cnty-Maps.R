@@ -1,20 +1,18 @@
-#Just mapping counties for labels
+#Routine for making maps for USF Herbarium.
 
 #Libraries
 
-library(terra)
-library(geodata)
-library(maps)
-library(wesanderson)
 library(spData)
 library(sf)
 library(png)
-library(oce)
+
 data("us_states")
 
-#Set some logical variables
+#Set logical conditions. Default should be "FALSE".
 
-save_figs = TRUE
+#Enter county name in "cnty_name" variable and test script. Then switch to "FALSE"
+
+save_figs = FALSE
 cnty_name = "Martin"
 
 #Let's read a shapefile with county polygons.
